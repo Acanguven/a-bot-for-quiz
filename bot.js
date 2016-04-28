@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         QuizUp Bot
-// @namespace    https://github.com/thelaw44
+// @name         New Userscript
+// @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  QuizUp Bot
-// @author       The Law
+// @description  try to take over the world!
+// @author       You
 // @match        https://www.quizup.com/*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js
 // @grant        none
@@ -25,7 +25,8 @@
     var questionsFound = 0;
     var questionsKnew = 0;
 
-    $("body").prepend('<div class="bot-ui" style="position: absolute;width: 200px;top: 0;left: 0;height: 400px;background-color: black;color: green;z-index: 9999999;padding-top: 20px;text-align: center;line-height: 25px;"><div class="botstate">HOMEPAGE</div><hr><div class="questionCount">Recorded Questions:<span class="qCount">32</span></div><hr><button id="ststop">Start</button><hr><div class="qIndentified">False</div><hr><div class="ansState">Not Ready</div><hr><div class="knowledge">0/0</div></div>');
+    $("body").prepend('<div class="bot-ui" style="position: absolute;width: 200px;top: 0;left: 0;height: 400px;background-color: black;color: green;z-index: 9999999;padding-top: 20px;text-align: center;line-height: 25px;"><div class="botstate">HOMEPAGE</div><hr><div class="questionCount">Recorded Questions:<span class="qCount">32</span></div><hr><button id="ststop">Start</button><hr><div class="qIndentified">False</div><hr><div class="ansState">Not Ready</div><hr><div class="knowledge">0/0</div><hr><input type="file" id="file" name="file"/><button id="exp">Export</button></div>');
+
     $("#ststop").click(function(){
         if(botStarted){
             $("#ststop").html("Start");
@@ -33,6 +34,27 @@
             $("#ststop").html("Stop");
         }
         botStarted = !botStarted;
+    });
+
+    $(document).on('change','#file' , function(){ 
+        var input = event.target;
+        var reader = new FileReader();
+        reader.onload = function(){
+            var importedJson = reader.result;
+            var data = JSON.parse(importedJson);
+            Object.keys(data).forEach(function (k) {
+                localStorage.setItem(k, data[k]);
+            });
+        };
+        reader.readAsText(input.files[0]);
+    });
+
+    $("#exp").click(function(){
+        var hiddenElement = document.createElement('a');
+        hiddenElement.href = 'data:attachment/text,' + encodeURI(JSON.stringify(localStorage));
+        hiddenElement.target = '_blank';
+        hiddenElement.download = 'knowledge.json';
+        hiddenElement.click();
     });
 
     var _stateDetector = setInterval(function(){
@@ -87,7 +109,7 @@
                             $(".knowledge").text(questionsKnew + "/" + questionsFound);
                         }
                         if($(".Question__text").text() && $(".Question__text") && $(".Question__text").text().length > 5){
-                            if(myScore > enemyScore + 25){
+                            if(myScore > enemyScore + 35){
                                 /* Random Answer */
                                 $(".ansState").text("Huge win, random answering");
                                 randomAnswer();
