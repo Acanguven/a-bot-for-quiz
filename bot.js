@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         New Userscript
-// @namespace    http://tampermonkey.net/
+// @name         QuizUp Bot
+// @namespace    https://github.com/thelaw44
 // @version      0.1
-// @description  try to take over the world!
-// @author       You
+// @description  QuizUp Bot
+// @author       The Law
 // @match        https://www.quizup.com/*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js
 // @grant        none
