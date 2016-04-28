@@ -18,6 +18,7 @@
     var POSTGAMEENDED = 4;
     var HOMEPAGE = 5;
     var GAMEINIT = 6;
+    var ERRORSTATE = 7;
 
     var botStarted = false;
 
@@ -77,6 +78,9 @@
         if($(".EndGameResultsActions__button--play").length > 0){
             tempState = POSTGAMEENDED;
         }
+        if($(".GameErrorScene__text").length > 0){
+            tempState = ERRORSTATE;
+        }
         CURRENTSTATE = tempState;
         _worker();
     },500);
@@ -109,7 +113,7 @@
                             $(".knowledge").text(questionsKnew + "/" + questionsFound);
                         }
                         if($(".Question__text").text() && $(".Question__text") && $(".Question__text").text().length > 5){
-                            if(myScore > enemyScore + 35){
+                            if(myScore > enemyScore + 40){
                                 /* Random Answer */
                                 $(".ansState").text("Huge win, random answering");
                                 randomAnswer();
@@ -123,7 +127,7 @@
                                     }else{
                                         /* Answer Calm To Not Get Detected */
 
-                                        if(timeRemains > 5){
+                                        if(timeRemains > 5 + Math.floor((Math.random() * 3) + 1)){
                                             $(".ansState").text("Waiting for calm answer over 5 seconds");
                                             if((timeRemains-1) * roundMultiplier + myScore < enemyScore){
                                                 answerFromLocal();
@@ -164,6 +168,11 @@
                 break;
             case GAMEINIT:
                 $(".botstate").text("Game loading");
+                break;
+            case ERRORSTATE:
+                if(botStarted){
+                    $(".ModalClose")[0].click();
+                }
                 break;
 
         }
