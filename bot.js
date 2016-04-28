@@ -94,7 +94,7 @@
                             }else{
                                 if(localStorage.getItem($(".Question__text").text())){
                                     $(".qIndentified").text(localStorage.getItem($(".Question__text").text()));
-                                    if(enemyScore > myScore){
+                                    if(enemyScore >= myScore){
                                         /* Answer Fast To Catch */
                                         $(".ansState").text("Trying to catch him, know the answer");
                                         answerFromLocal();
