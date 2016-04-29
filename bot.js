@@ -26,7 +26,11 @@
     var questionsFound = 0;
     var questionsKnew = 0;
 
-    $("body").prepend('<div class="bot-ui" style="position: absolute;width: 200px;top: 0;left: 0;height: 400px;background-color: black;color: green;z-index: 9999999;padding-top: 20px;text-align: center;line-height: 25px;"><div class="botstate">HOMEPAGE</div><hr><div class="questionCount">Recorded Questions:<span class="qCount">32</span></div><hr><button id="ststop">Start</button><hr><div class="qIndentified">False</div><hr><div class="ansState">Not Ready</div><hr><div class="knowledge">0/0</div><hr><input type="file" id="file" name="file"/><button id="exp">Export</button></div>');
+    var winCount = 0;
+    var netErrorCount = 0;
+    var loseCount = 0;
+
+    $("body").prepend('<div class="bot-ui" style="position: absolute;width: 200px;top: 0;left: 0;height: 430px;background-color: black;color: green;z-index: 9999999;padding-top: 20px;text-align: center;line-height: 25px;"><div class="botstate">HOMEPAGE</div><hr><div class="questionCount">Recorded Questions:<span class="qCount">32</span></div><hr><button id="ststop">Start</button><hr><div class="qIndentified">False</div><hr><div class="ansState" style="min-height:25px;">Not Ready</div><hr><div class="knowledge">0/0</div><hr><div>Win:<span class="winc">0</span><br>Lose:<span class="losec">0</span><br>Err:<span class="errc">0</span><br></div><hr><input type="file" id="file" name="file"/><button id="exp">Export</button></div>');
 
     $("#ststop").click(function(){
         if(botStarted){
@@ -97,6 +101,7 @@
                 if($(".Answer--correct").length > 0){
                     localStorage.setItem($(".Question__text").text(), $(".Answer--correct").text());
                 }else{
+                    $(".qIndentified").text(localStorage.getItem($(".Question__text").text()));
                     if(botStarted){
                         var roundMultiplier = 2;
                         var timeRemains = parseInt($(".QuestionScene__timer__value").text());
@@ -151,6 +156,17 @@
             case GAMEENDED:
                 $(".botstate").text("Game Ended");
                 if(botStarted){
+                    var resTest = $(".EndGameHeader__results__text").text();
+                    if(resTest == "You won!"){
+                        winCount++;
+                        $(".winc").text(winCount);
+                    }else if(resTest == "You lost!"){
+                        loseCount++;
+                        $(".losec").text(loseCount);
+                    }else{
+                        netErrorCount++;
+                        $(".errc").text(netErrorCount);
+                    }
                     $(".ModalClose")[0].click();
                 }
                 break;
