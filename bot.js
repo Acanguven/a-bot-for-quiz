@@ -21,7 +21,9 @@
     var ERRORSTATE = 7;
 
     var botStarted = false;
+    var answerProgrammed = false;
 
+    var nextGameTimer = Date.now();
     var lastQuestion = "";
     var questionsFound = 0;
     var questionsKnew = 0;
@@ -101,6 +103,7 @@
                 if($(".Answer--correct").length > 0){
                     localStorage.setItem($(".Question__text").text(), $(".Answer--correct").text());
                 }else{
+                    console.log("%c"+localStorage.getItem($(".Question__text").text()), "color: blue; font-size:23px;"); 
                     $(".qIndentified").text(localStorage.getItem($(".Question__text").text()));
                     if(botStarted){
                         var roundMultiplier = 2;
@@ -121,18 +124,38 @@
                             if(myScore > enemyScore + 40){
                                 /* Random Answer */
                                 $(".ansState").text("Huge win, random answering");
-                                randomAnswer();
+                                if(!answerProgrammed){
+                                    answerProgrammed = true;
+                                    setTimeout(function(){
+                                        randomAnswer();
+                                    },getRandomInt(600,1000));
+                                }
+
                             }else{
                                 if(localStorage.getItem($(".Question__text").text())){
                                     $(".qIndentified").text(localStorage.getItem($(".Question__text").text()));
                                     if(enemyScore >= myScore){
                                         /* Answer Fast To Catch */
+                                        if(!answerProgrammed && answerVisible()){
+                                            console.log("set answer");
+                                            if(myScore === 0){
+                                                answerProgrammed = true;
+                                                setTimeout(function(){
+                                                    answerFromLocal();
+                                                },getRandomInt(600,1100));
+                                            }else{
+                                                answerProgrammed = true;
+                                                setTimeout(function(){
+                                                    answerFromLocal();
+                                                },getRandomInt(350,1250));
+                                            }
+                                        }
                                         $(".ansState").text("Trying to catch him, know the answer");
-                                        answerFromLocal();
+
                                     }else{
                                         /* Answer Calm To Not Get Detected */
 
-                                        if(timeRemains > 5 + Math.floor((Math.random() * 3) + 1)){
+                                        if(timeRemains >= 7 + Math.floor((Math.random() * 3) + 1)){
                                             $(".ansState").text("Waiting for calm answer over 5 seconds");
                                             if((timeRemains-1) * roundMultiplier + myScore < enemyScore){
                                                 answerFromLocal();
@@ -146,7 +169,12 @@
                                     /* Random Answer */
                                     $(".qIndentified").text(":(");
                                     $(".ansState").text("Don't know the question random answering");
-                                    randomAnswer();
+                                    if(!answerProgrammed){
+                                        answerProgrammed = true;
+                                        setTimeout(function(){
+                                            randomAnswer();
+                                        },getRandomInt(600,2500));
+                                    }
                                 }
                             }
                         }
@@ -173,7 +201,10 @@
             case POSTGAMEENDED:
                 $(".botstate").text("Post Game Ended");
                 if(botStarted){
-                    $(".ModalClose")[0].click();
+                    if(nextGameTimer + getRandomInt(3000,12000) < Date.now()){
+                        nextGameTimer = Date.now();
+                        $(".ModalClose")[0].click();
+                    }
                 }
                 break;
             case HOMEPAGE:
@@ -197,6 +228,7 @@
     };
 
     var randomAnswer = function(){
+        answerProgrammed = false;
         var len = $(".Answer__text").length;
         var random = Math.floor( Math.random() * len ) + 1;
         $(".Answer__text").eq(random).click();
@@ -207,8 +239,25 @@
         $(".Answer__text").each(function(i,elem){
             if($(elem).text() == answerText){
                 $(elem).click();
+                answerProgrammed = false;
             }
         });
     };
 
+    var answerVisible = function(){
+        var ret = false;
+        var answerText = localStorage.getItem($(".Question__text").text());
+        $(".Answer__text").each(function(i,elem){
+            if($(elem).text() == answerText){
+                if(!$(elem).parent().hasClass("Answer--hidden")){
+                    ret = true;
+                }
+            }
+        });
+        return ret;
+    };
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 })();
